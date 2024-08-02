@@ -16,6 +16,12 @@ Monthly triggered tools fetching family expense records from google sheet and ge
     source ./init.sh
     ```
 
+3. Set up credentials to get access to google sheets
+
+    ```.txt
+    GOOGLE_APPLICATION_CREDENTIALS={PATH_TO_CREDENTIAL_JSON_FILE}
+    ```
+
 ## Project Structure
 
 ``` text

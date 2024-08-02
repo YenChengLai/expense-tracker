@@ -27,4 +27,13 @@ pip install -r "$script_dir/requirements.txt"
 # Upgrade pip version
 pip install --upgrade pip
 
+# Check if .env file exists
+if [ -f ".env" ]; then
+    # If it exists, append the content to the file
+    echo "GOOGLE_APPLICATION_CREDENTIALS=" >> .env
+else
+    # If it doesn't exist, create it and write the content
+    echo "GOOGLE_APPLICATION_CREDENTIALS=" > .env
+fi
+
 echo "Virtual environment $venv_name created."
