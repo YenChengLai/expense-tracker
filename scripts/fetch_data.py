@@ -14,8 +14,8 @@ def export(file_name: str, data: str) -> None:
         file.write(json.dumps(data, indent=4, ensure_ascii=False))
 
 
-def get_google_sheet_data(spreadsheet_id, sheet_name):
-    """Fetches data from a Google Sheet using service account authentication."""
+def get_google_sheet_data(spreadsheet_id, prefix):
+    """Fetches data from all sheets in a Google Sheet."""
 
     # Load credentials from environment variable
     creds = Credentials.from_service_account_file(
@@ -23,40 +23,43 @@ def get_google_sheet_data(spreadsheet_id, sheet_name):
     )
     service = build("sheets", "v4", credentials=creds)
 
-    # Construct the range
-    range_name = f"{sheet_name}!A1:E"
+    # Get all sheet titles
+    sheet_metadata = service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
+    sheets = sheet_metadata.get("sheets", [])
 
-    try:
-        # Make a request to retrieve data from the Google Sheets API
-        response = (
-            service.spreadsheets()
-            .values()
-            .get(spreadsheetId=spreadsheet_id, range=range_name)
-            .execute()
-        )
+    # Create an empty dictionary to store all sheet data
+    all_sheet_data = {}
 
-        # Parse the JSON response
-        data = response.get("values", [])
-        if not data:
-            return None
+    # Loop through all sheets and fetch data
+    for sheet in sheets:
+        sheet_title = sheet["properties"]["title"]
+        if sheet_title.startswith(prefix):
+            range_name = f"{sheet_title}!A1:E"
+            try:
+                response = (
+                    service.spreadsheets()
+                    .values()
+                    .get(spreadsheetId=spreadsheet_id, range=range_name)
+                    .execute()
+                )
+                data = response.get("values", [])
+                export(file_name="expense.json", data=data)
+                if data:
+                    all_sheet_data[sheet_title] = pd.DataFrame(data[1:], columns=data[0])
 
-        export(file_name="expense.json", data=data)
+            except Exception as e:
+                print(f"An error occurred fetching data from {sheet_title}: {e}")
 
-        # Convert to Pandas DataFrame
-        df = pd.DataFrame(data[1:], columns=data[0])
-        return df
-
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return None
+    return all_sheet_data
 
 
 spreadsheet_id = "SPREAD_SHEET_ID"
-sheet_name = "202407 Dad's Spending"
+prefix = "202407"
 
-sheet_data = get_google_sheet_data(spreadsheet_id, sheet_name)
+all_sheet_data = get_google_sheet_data(spreadsheet_id, prefix)
+# export(file_name="expense.json", data=all_sheet_data)
 
-if sheet_data is not None:
-    print(sheet_data)
+if all_sheet_data is not None:
+    print(all_sheet_data)
 else:
     print("Failed to fetch data from Google Sheets API.")

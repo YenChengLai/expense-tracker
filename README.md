@@ -1,4 +1,4 @@
-# expense_tracker
+# Expense Tracker
 
 Monthly triggered tools fetching family expense records from google sheet and generate visualizations
 
