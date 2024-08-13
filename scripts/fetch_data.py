@@ -28,7 +28,7 @@ def get_google_sheet_data(spreadsheet_id, prefix):
     sheets = sheet_metadata.get("sheets", [])
 
     # Create an empty dictionary to store all sheet data
-    all_sheet_data = {}
+    selected_data = []
 
     # Loop through all sheets and fetch data
     for sheet in sheets:
@@ -43,23 +43,19 @@ def get_google_sheet_data(spreadsheet_id, prefix):
                     .execute()
                 )
                 data = response.get("values", [])
-                export(file_name="expense.json", data=data)
                 if data:
-                    all_sheet_data[sheet_title] = pd.DataFrame(data[1:], columns=data[0])
+                    # Convert data to a Pandas DataFrame and then to a list of dictionaries
+                    df = pd.DataFrame(data[1:], columns=data[0])
+                    selected_data.extend(df.to_dict('records'))
 
             except Exception as e:
                 print(f"An error occurred fetching data from {sheet_title}: {e}")
 
-    return all_sheet_data
+    return selected_data
 
 
-spreadsheet_id = "SPREAD_SHEET_ID"
+spreadsheet_id = "{SPREAD_SHEET_ID}"
 prefix = "202407"
 
-all_sheet_data = get_google_sheet_data(spreadsheet_id, prefix)
-# export(file_name="expense.json", data=all_sheet_data)
-
-if all_sheet_data is not None:
-    print(all_sheet_data)
-else:
-    print("Failed to fetch data from Google Sheets API.")
+all_data = get_google_sheet_data(spreadsheet_id, prefix)
+export(file_name="expense.json", data=all_data)
