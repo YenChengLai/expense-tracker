@@ -29,7 +29,10 @@ Monthly triggered tools fetching family expense records from google sheet and ge
 ├── .cmds
 │   ├── requirements.txt
 │   └── setup.sh
+├── resources
+|   └── kaiu.ttf
 ├── scripts
+|   ├── clean_data.py
 |   └── fetch_data.py
 ├── init.sh
 └── README.md
