@@ -1,2 +1,4 @@
 expense-tracker
 .env
+expense.json
+cleaned_data.csv
