@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from googleapiclient.discovery import build
 from google.oauth2.service_account import Credentials
 
-SPREAD_SHEET_ID = os.environ.get('SPREAD_SHEET_ID')
+SPREAD_SHEET_ID = os.environ.get("SPREAD_SHEET_ID")
 
 
 def export(file_name: str, data: str) -> None:
@@ -19,8 +19,8 @@ def get_google_sheet_data(spreadsheet_id, prefix):
     """Fetches data from all sheets in a Google Sheet."""
 
     # Load credentials from environment variable
-    creds = Credentials.from_service_account_file(
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
+    creds = Credentials.from_service_account_info(
+        json.loads(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"))
     )
     service = build("sheets", "v4", credentials=creds)
 
