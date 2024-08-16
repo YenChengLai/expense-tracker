@@ -1,15 +1,9 @@
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st  # Added for Streamlit integration
 
-from matplotlib.font_manager import FontProperties
-
-"""
-Take handled dataframe and generate plots
-"""
+from datetime import datetime
 
 
 def visualize_data(df: pd.DataFrame):
@@ -22,17 +16,17 @@ def visualize_data(df: pd.DataFrame):
 
     fig = go.Figure(data=[go.Pie(labels=categorys, values=values)])
     fig.update_traces(hoverinfo='label+value', textinfo='percent')
-    fig.update_layout(title="Distribution of Expenses by Category")
+    fig.update_layout(title="支出大項分布")
 
     st.plotly_chart(fig)
 
     # 2. Pie chart for different For Whom
     for_whom = expense_df["For Whom"]
-    
+
     fig = go.Figure(data=[go.Pie(labels=for_whom, values=values)])
     fig.update_traces(hoverinfo='label+value', textinfo='percent')
-    fig.update_layout(title="Distribution of Expenses by For Whom")
-    
+    fig.update_layout(title="支出受益人分布")
+
     st.plotly_chart(fig)
 
     # 3. Column chart showing days with different categories
@@ -55,7 +49,7 @@ def visualize_data(df: pd.DataFrame):
         data.width = 1
 
     fig.update_layout(
-        title="Daily Expenses by Category",
+        title="支出逐日比例分布",
         xaxis_tickangle=-45,
         yaxis=dict(range=[0, 10000]),
     )
@@ -72,36 +66,31 @@ def visualize_data(df: pd.DataFrame):
         df_by_day,
         x="Day",
         y=df_by_day.columns[1:],  # Use all columns except "Day" (assuming expenses and income)
-        title="Expenses vs Income Over Time",
+        title="支出收入趨勢",
         markers=True,
     )
 
     fig.update_layout(
         legend_title="Category"
     )
-
     st.plotly_chart(fig)
-
-    # # Calculate total expenses per day
-    # total_expenses = expense_df.groupby('Day')['Amount / Cost'].sum()
-    # # Calculate ECDF
-    # x, y = np.sort(total_expenses), np.arange(len(total_expenses)) / len(total_expenses)
-
-    # # Create the Plotly figure
-    # fig = px.line(x=x, y=y, labels={'x': 'Total Expenses', 'y': 'Cumulative Probability'})
-    # fig.update_layout(title='ECDF of Total Expenses')
-
-    # st.plotly_chart(fig)
-
 
 
 def app():
     # Load data (replace with actual data loading logic)
     df = pd.read_csv("cleaned_data.csv")
 
+    month = datetime.now().month - 1
     # Title and introduction (optional)
-    st.title("Expense Visualizations")
-    st.write("This dashboard presents various visualizations of your expenses.")
+    st.title(f"{month}月份 帳務明細")
+
+    st.markdown("""<style> .title-font {
+                    font-size: 25px !important;
+                    font-weight: bold
+                }
+                """, unsafe_allow_html=True)
+    st.markdown('<p class="title-font">下列圖表包含:</p>', unsafe_allow_html=True)
+    st.markdown('<ul><li>支出大項分布圖</li><li>支出受益人分布圖</li><li>支出逐日比例分布圖</li><li>支出收入趨勢圖</li></ul>', unsafe_allow_html=True)
 
     # Call visualize_data function
     visualize_data(df)

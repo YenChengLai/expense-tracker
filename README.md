@@ -38,3 +38,23 @@ Monthly triggered tools fetching family expense records from google sheet and ge
 ├── init.sh
 └── README.md
 ```
+
+## Workflow
+
+1. Fetch data from google sheet and generate `expense.json` file as result.
+
+```.sh
+python scripts/fetch_data.py
+```
+
+2. Clean fetched data, create dataframe, and store it as `cleaned_data.csv`
+
+```.sh
+python scripts/clean_data.py
+```
+
+3. Generate visualization result using `streamlit` based on the cleaned data.
+
+```.sh
+streamlit run scripts/visualize_data.py
+```

@@ -40,5 +40,5 @@ def clean_and_transform_data(file_path: str) -> None:
 
     df.to_csv('cleaned_data.csv', index=False)
 
-
-clean_and_transform_data(FILE_PATH)
+if __name__ == "__main__":
+    clean_and_transform_data(FILE_PATH)
