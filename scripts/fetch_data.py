@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from googleapiclient.discovery import build
 from google.oauth2.service_account import Credentials
 
-SPREAD_SHEET_ID = "{SPREAD_SHEET_ID}"
+SPREAD_SHEET_ID = os.environ.get('SPREAD_SHEET_ID')
 
 
 def export(file_name: str, data: str) -> None:
